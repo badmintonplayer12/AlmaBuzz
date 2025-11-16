@@ -63,6 +63,7 @@ let favoritesPersistenceAvailable = true;
 let prefsPersistenceAvailable = true;
 let regenerateInFlight = false;
 let hotspotSeen = false;
+let playbackInProgress = null; // Guard: promise for ongoing playback
 
 function humanizeClipId(id) {
   return typeof id === "string" ? id.replace(/_/g, " ") : "";
@@ -177,6 +178,8 @@ function handlePlaybackEnded({ reason } = {}) {
   if (reason === "cleanup" || reason === "error") {
     return;
   }
+  // Clear guard when playback ends naturally
+  playbackInProgress = null;
   elements.actionButton?.classList.remove("is-playing");
   // Clear emoji from button when playback ends
   updateButtonEmoji(null);
@@ -377,6 +380,8 @@ async function handlePreviewClick(fileId) {
       await audioEngine.fadeOut(STOP_FADE_MS);
       updateButtonEmoji(null);
     }
+    // Clear guard when stopping playback
+    playbackInProgress = null;
     // Clear preview button state
     libraryState.previewId = null;
     if (elements.libraryList) {
@@ -929,7 +934,27 @@ function updateButtonColor(clip) {
 }
 
 async function playClipResult(result) {
+  // Guard: Stop any ongoing playback before starting new one
+  if (playbackInProgress) {
+    // Stop the current playback immediately
+    try {
+      audioEngine.stopImmediate();
+    } catch (error) {
+      console.warn("Failed to stop ongoing playback", error);
+    }
+    // Wait for the previous playback to finish (or timeout)
+    try {
+      await Promise.race([
+        playbackInProgress,
+        new Promise(resolve => setTimeout(resolve, 100)), // Timeout after 100ms
+      ]);
+    } catch (error) {
+      // Ignore errors from previous playback
+    }
+  }
+
   if (!result || !result.clip) {
+    playbackInProgress = null;
     elements.actionButton?.classList.remove("is-playing");
     // Clear emoji from button
     updateButtonEmoji(null);
@@ -950,6 +975,21 @@ async function playClipResult(result) {
     });
     return;
   }
+
+  // Create a promise for this playback session
+  const playbackPromise = (async () => {
+    try {
+      // Stop any current playback before starting
+      if (audioEngine.state === "playing" || audioEngine.state === "fading") {
+        audioEngine.stopImmediate();
+      }
+    } catch (error) {
+      console.warn("Failed to stop before playback", error);
+    }
+  })();
+
+  playbackInProgress = playbackPromise;
+
   try {
     // Update preview button state to show which song is playing
     libraryState.previewId = result.clip.id;
@@ -982,6 +1022,11 @@ async function playClipResult(result) {
     persistSession({ index: playlist.cursor });
     prefetchUpcomingClip();
 
+    // Clear guard when playback completes successfully
+    if (playbackInProgress === playbackPromise) {
+      playbackInProgress = null;
+    }
+
     updateUi({
       statusText: `Spiller #${result.index + 1} av ${result.total} …`,
       actionLabel: "Fade ut",
@@ -990,6 +1035,11 @@ async function playClipResult(result) {
       buttonState: "playing",
     });
   } catch (error) {
+    // Clear guard on error
+    if (playbackInProgress === playbackPromise) {
+      playbackInProgress = null;
+    }
+    
     console.error("playClipResult failed", error);
     elements.actionButton?.classList.remove("is-playing");
 
@@ -1057,6 +1107,8 @@ async function handleActionClick() {
     elements.actionButton?.style.setProperty("--fade-ms", `${STOP_FADE_MS}ms`);
     try {
       await audioEngine.fadeOut(STOP_FADE_MS);
+      // Clear guard when stopping playback
+      playbackInProgress = null;
       // Clear emoji from button after fade out
       updateButtonEmoji(null);
       elements.actionButton?.classList.add("post-bounce");
@@ -1064,6 +1116,8 @@ async function handleActionClick() {
       elements.actionButton?.style.removeProperty("--fade-ms");
     } catch (error) {
       console.error("Fade out failed", error);
+      // Clear guard even if fade out fails
+      playbackInProgress = null;
       // Clear emoji even if fade out fails
       updateButtonEmoji(null);
       updateUi({
