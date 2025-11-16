@@ -370,17 +370,10 @@ async function handlePreviewClick(fileId) {
   // Stop any preview playback
   stopPreviewPlayback();
   
-  // Stop main playback if playing
-  if (audioEngine.state === "playing") {
-    try {
-      await audioEngine.fadeOut(STOP_FADE_MS);
-      // Clear emoji from button after fade out
-      updateButtonEmoji(null);
-    } catch (error) {
-      console.error("Fade out failed", error);
-      // Clear emoji even if fade out fails
-      updateButtonEmoji(null);
-    }
+  // Stop main playback immediately if playing (no fade when switching songs from menu)
+  if (audioEngine.state === "playing" || audioEngine.state === "fading") {
+    audioEngine.stopImmediate();
+    updateButtonEmoji(null);
   }
   
   // Update playlist to start from this song
