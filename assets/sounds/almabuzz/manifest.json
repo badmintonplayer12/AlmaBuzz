@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "ttlHours": 3,
+  "formats": [
+    "mp3"
+  ],
+  "basePath": "assets/sounds/almabuzz/NonCommerseLicense",
+  "normalization": {
+    "targetLufs": -14,
+    "peakDbtp": -1
+  },
+  "manifestEtag": "nc-pack-v4",
+  "files": [
+    {
+      "display": "Alma og Silas",
+      "id": "Alma_og-Silas",
+      "src": "Alma_og-Silas",
+      "category": "music",
+      "gain": 0,
+      "etag": "AlmaOgSilas-v1"
+    },
+    {
+      "display": "Alma som danser",
+      "id": "Alma_som_danser",
+      "src": "Alma_som_danser",
+      "category": "music",
+      "gain": 0,
+      "etag": "AlmaSomDanser-v1"
+    },
+    {
+      "display": "Bingo Baby A",
+      "id": "bingo_baby_a",
+      "src": "bingo_baby_a",
+      "category": "music",
+      "gain": 0,
+      "etag": "BingoBaby-v1"
+    },
+    {
+      "display": "Bingo Baby B",
+      "id": "bingo_baby_b",
+      "src": "bingo_baby_b",
+      "category": "music",
+      "gain": 0,
+      "etag": "BingoBaby1-v1"
+    },
+    {
+      "display": "Dancing in the Moonlight",
+      "id": "Dancing_in_the_Moonlight",
+      "src": "Dancing_in_the_Moonlight",
+      "category": "music",
+      "gain": 0,
+      "etag": "DancingMoonlight-v1"
+    },
+    {
+      "display": "Doen som forsvant",
+      "id": "Doen_som_forsvant",
+      "src": "Doen_som_forsvant",
+      "category": "music",
+      "gain": 0,
+      "etag": "DoenSomForsvant-v1"
+    },
+    {
+      "display": "Dyredans med Farger",
+      "id": "Dyredans_med_Farger",
+      "src": "Dyredans_med_Farger",
+      "category": "music",
+      "gain": 0,
+      "etag": "DyredansMedFarger-v1"
+    },
+    {
+      "display": "Rumpa Rumpa Rumpa",
+      "id": "Rumpa_Rumpa_Rumpa",
+      "src": "Rumpa_Rumpa_Rumpa",
+      "category": "music",
+      "gain": 0,
+      "etag": "RumpaRumpaRumpa-v1"
+    },
+    {
+      "display": "Rumpemannen",
+      "id": "Rumpemannen",
+      "src": "Rumpemannen",
+      "category": "music",
+      "gain": 0,
+      "etag": "Rumpemannen-v1"
+    },
+    {
+      "display": "Skogens Hemmeligheter",
+      "id": "Skogens_Hemmeligheter",
+      "src": "Skogens_Hemmeligheter",
+      "category": "music",
+      "gain": 0,
+      "etag": "SkogensHemmeligheter-v1"
+    }
+  ]
+}
