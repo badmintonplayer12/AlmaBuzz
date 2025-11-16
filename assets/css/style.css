@@ -193,6 +193,7 @@ body::after {
   background: rgba(255, 255, 255, 0.03);
   border-left: 3px solid transparent;
   transition: border-left-color 0.3s ease, background-color 0.3s ease;
+  cursor: pointer;
 }
 
 .library-item__emoji {

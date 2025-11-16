@@ -367,6 +367,26 @@ async function handlePreviewClick(fileId) {
     return;
   }
   
+  // Check if this song is already playing
+  const isCurrentlyPlaying = audioEngine.currentClip?.id === fileId && 
+                              (audioEngine.state === "playing" || audioEngine.state === "fading");
+  
+  if (isCurrentlyPlaying) {
+    // Pause/stop the currently playing song
+    if (audioEngine.state === "playing" || audioEngine.state === "fading") {
+      await audioEngine.fadeOut(STOP_FADE_MS);
+      updateButtonEmoji(null);
+    }
+    // Clear preview button state
+    libraryState.previewId = null;
+    if (elements.libraryList) {
+      elements.libraryList
+        .querySelectorAll(".preview-button")
+        .forEach((btn) => btn.setAttribute("aria-pressed", "false"));
+    }
+    return;
+  }
+  
   // Stop any preview playback
   stopPreviewPlayback();
   
@@ -453,6 +473,7 @@ function renderLibraryList() {
   filteredRows.forEach((file) => {
     const item = document.createElement("div");
     item.className = "library-item";
+    item.dataset.fileId = file.id; // Add fileId to enable clicking on the whole card
     
     // Add color styling if available
     if (file.color) {
@@ -1130,6 +1151,15 @@ function bindUi() {
       const fileId = favBtn.dataset.fileId;
       if (fileId) {
         toggleFavorite(fileId);
+      }
+      return;
+    }
+    // Check if click is on the library-item card itself (not on buttons)
+    const libraryItem = target.closest(".library-item");
+    if (libraryItem && libraryItem instanceof HTMLElement) {
+      const fileId = libraryItem.dataset.fileId;
+      if (fileId) {
+        void handlePreviewClick(fileId);
       }
     }
   });
