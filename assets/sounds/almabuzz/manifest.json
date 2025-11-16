@@ -214,6 +214,108 @@
         "radial2Pos": "77% 78%"
       },
       "emoji": "🎭"
+    },
+    {
+      "display": "A goofy robot glitch",
+      "id": "A_goofy_robot_glitc",
+      "src": "A_goofy_robot_glitc",
+      "category": "voice",
+      "gain": 0,
+      "etag": "AGoofyRobotGlitch-v1",
+      "color": {
+        "hue": 269.096,
+        "saturation": 85,
+        "lightness": 54,
+        "bgAngle": 81,
+        "radial1Pos": "80% 84%",
+        "radial2Pos": "33% 70%"
+      },
+      "emoji": "🤖"
+    },
+    {
+      "display": "A tiny duck trying to quack",
+      "id": "A_tiny_duck_trying_to_quack",
+      "src": "A_tiny_duck_trying_to_quack",
+      "category": "voice",
+      "gain": 0,
+      "etag": "ATinyDuckTryingToQuack-v1",
+      "color": {
+        "hue": 46.60400000000004,
+        "saturation": 81,
+        "lightness": 50,
+        "bgAngle": 95,
+        "radial1Pos": "45% 77%",
+        "radial2Pos": "44% 68%"
+      },
+      "emoji": "🦆"
+    },
+    {
+      "display": "Funny animal sounds",
+      "id": "funny_animal_sounds",
+      "src": "funny_animal_sounds",
+      "category": "voice",
+      "gain": 0,
+      "etag": "FunnyAnimalSounds-v1",
+      "color": {
+        "hue": 184.11200000000008,
+        "saturation": 86,
+        "lightness": 47,
+        "bgAngle": 95,
+        "radial1Pos": "73% 74%",
+        "radial2Pos": "66% 17%"
+      },
+      "emoji": "🐾"
+    },
+    {
+      "display": "Funny dog animal sounds",
+      "id": "funny_dog_animal_sounds",
+      "src": "funny_dog_animal_sounds",
+      "category": "voice",
+      "gain": 0,
+      "etag": "FunnyDogAnimalSounds-v1",
+      "color": {
+        "hue": 321.62000000000035,
+        "saturation": 82,
+        "lightness": 52,
+        "bgAngle": 226,
+        "radial1Pos": "30% 34%",
+        "radial2Pos": "50% 16%"
+      },
+      "emoji": "🐕"
+    },
+    {
+      "display": "Latterkrampe party",
+      "id": "Latterkrampe_party",
+      "src": "Latterkrampe_party",
+      "category": "voice",
+      "gain": 0,
+      "etag": "LatterkrampeParty-v1",
+      "color": {
+        "hue": 99.12800000000016,
+        "saturation": 84,
+        "lightness": 47,
+        "bgAngle": 82,
+        "radial1Pos": "61% 43%",
+        "radial2Pos": "41% 89%"
+      },
+      "emoji": "🎉"
+    },
+    {
+      "display": "Tøyseby Latter Alarm",
+      "id": "Tyseby_Latter_Alarm",
+      "src": "Tyseby_Latter_Alarm",
+      "category": "voice",
+      "gain": 0,
+      "etag": "ToysebyLatterAlarm-v1",
+      "color": {
+        "hue": 236.63599999999997,
+        "saturation": 89,
+        "lightness": 51,
+        "bgAngle": 322,
+        "radial1Pos": "49% 75%",
+        "radial2Pos": "50% 74%"
+      },
+      "emoji": "🚨"
     }
   ]
 }
