@@ -28,22 +28,6 @@
       "etag": "AlmaSomDanser-v1"
     },
     {
-      "display": "Bingo Baby A",
-      "id": "bingo_baby_a",
-      "src": "bingo_baby_a",
-      "category": "music",
-      "gain": 0,
-      "etag": "BingoBaby-v1"
-    },
-    {
-      "display": "Bingo Baby B",
-      "id": "bingo_baby_b",
-      "src": "bingo_baby_b",
-      "category": "music",
-      "gain": 0,
-      "etag": "BingoBaby1-v1"
-    },
-    {
       "display": "Dancing in the Moonlight",
       "id": "Dancing_in_the_Moonlight",
       "src": "Dancing_in_the_Moonlight",
