@@ -23,6 +23,28 @@ function sanitizeFile(entry) {
     typeof entry.display === "string" && entry.display.trim()
       ? entry.display.trim()
       : null;
+  
+  // Preserve color data if present
+  let color = null;
+  if (entry.color && typeof entry.color === "object" && entry.color.hue != null) {
+    const hue = toNumber(entry.color.hue, null);
+    if (hue !== null && Number.isFinite(hue)) {
+      color = {
+        hue,
+        saturation: toNumber(entry.color.saturation, 85),
+        lightness: toNumber(entry.color.lightness, 50),
+        bgAngle: toNumber(entry.color.bgAngle, null),
+        radial1Pos: typeof entry.color.radial1Pos === "string" ? entry.color.radial1Pos : null,
+        radial2Pos: typeof entry.color.radial2Pos === "string" ? entry.color.radial2Pos : null,
+      };
+    }
+  }
+  
+  // Preserve emoji if present
+  const emoji = typeof entry.emoji === "string" && entry.emoji.trim()
+    ? entry.emoji.trim()
+    : null;
+  
   return {
     id,
     src,
@@ -37,6 +59,8 @@ function sanitizeFile(entry) {
       typeof entry.etag === "string" && entry.etag.trim()
         ? entry.etag.trim()
         : null,
+    color,
+    emoji,
   };
 }
 
@@ -107,7 +131,10 @@ function normalizeManifest(raw) {
 
 export async function loadManifest(url = MANIFEST_URL) {
   try {
-    const response = await fetch(url, { cache: "no-cache" });
+    // Add cache busting to ensure fresh manifest
+    const separator = url.includes("?") ? "&" : "?";
+    const cacheBustUrl = `${url}${separator}_=${Date.now()}`;
+    const response = await fetch(cacheBustUrl, { cache: "no-cache" });
     if (!response.ok) {
       throw new Error(`Manifest request failed (${response.status})`);
     }

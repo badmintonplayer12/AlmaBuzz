@@ -1,4 +1,4 @@
-const SHELL_CACHE = "bbz-shell-v2";
+const SHELL_CACHE = "bbz-shell-v4";
 const AUDIO_CACHE = "bbz-audio-v2";
 const SHELL_ASSETS = [
   "./",

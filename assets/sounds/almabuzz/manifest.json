@@ -17,7 +17,16 @@
       "src": "Alma_og-Silas",
       "category": "music",
       "gain": 0,
-      "etag": "AlmaOgSilas-v1"
+      "etag": "AlmaOgSilas-v1",
+      "color": {
+        "hue": 258,
+        "saturation": 88,
+        "lightness": 54,
+        "bgAngle": 188,
+        "radial1Pos": "42% 49%",
+        "radial2Pos": "85% 34%"
+      },
+      "emoji": "👶"
     },
     {
       "display": "Alma som danser",
@@ -25,7 +34,16 @@
       "src": "Alma_som_danser",
       "category": "music",
       "gain": 0,
-      "etag": "AlmaSomDanser-v1"
+      "etag": "AlmaSomDanser-v1",
+      "color": {
+        "hue": 35.50800000000004,
+        "saturation": 84,
+        "lightness": 51,
+        "bgAngle": 163,
+        "radial1Pos": "54% 80%",
+        "radial2Pos": "10% 35%"
+      },
+      "emoji": "💃"
     },
     {
       "display": "Dancing in the Moonlight",
@@ -33,7 +51,16 @@
       "src": "Dancing_in_the_Moonlight",
       "category": "music",
       "gain": 0,
-      "etag": "DancingMoonlight-v1"
+      "etag": "DancingMoonlight-v1",
+      "color": {
+        "hue": 173.01600000000008,
+        "saturation": 85,
+        "lightness": 49,
+        "bgAngle": 68,
+        "radial1Pos": "26% 44%",
+        "radial2Pos": "16% 52%"
+      },
+      "emoji": "🌙"
     },
     {
       "display": "Doen som forsvant",
@@ -41,7 +68,16 @@
       "src": "Doen_som_forsvant",
       "category": "music",
       "gain": 0,
-      "etag": "DoenSomForsvant-v1"
+      "etag": "DoenSomForsvant-v1",
+      "color": {
+        "hue": 310.524,
+        "saturation": 86,
+        "lightness": 51,
+        "bgAngle": 74,
+        "radial1Pos": "62% 73%",
+        "radial2Pos": "37% 72%"
+      },
+      "emoji": "🎶"
     },
     {
       "display": "Dyredans med Farger",
@@ -49,7 +85,16 @@
       "src": "Dyredans_med_Farger",
       "category": "music",
       "gain": 0,
-      "etag": "DyredansMedFarger-v1"
+      "etag": "DyredansMedFarger-v1",
+      "color": {
+        "hue": 88.03200000000004,
+        "saturation": 82,
+        "lightness": 50,
+        "bgAngle": 17,
+        "radial1Pos": "24% 20%",
+        "radial2Pos": "87% 77%"
+      },
+      "emoji": "🦋"
     },
     {
       "display": "Rumpa Rumpa Rumpa",
@@ -57,7 +102,16 @@
       "src": "Rumpa_Rumpa_Rumpa",
       "category": "music",
       "gain": 0,
-      "etag": "RumpaRumpaRumpa-v1"
+      "etag": "RumpaRumpaRumpa-v1",
+      "color": {
+        "hue": 225.54000000000008,
+        "saturation": 80,
+        "lightness": 53,
+        "bgAngle": 191,
+        "radial1Pos": "83% 88%",
+        "radial2Pos": "59% 68%"
+      },
+      "emoji": "🎵"
     },
     {
       "display": "Rumpemannen",
@@ -65,7 +119,16 @@
       "src": "Rumpemannen",
       "category": "music",
       "gain": 0,
-      "etag": "Rumpemannen-v1"
+      "etag": "Rumpemannen-v1",
+      "color": {
+        "hue": 3.048000000000002,
+        "saturation": 85,
+        "lightness": 46,
+        "bgAngle": 14,
+        "radial1Pos": "75% 75%",
+        "radial2Pos": "49% 63%"
+      },
+      "emoji": "🕺"
     },
     {
       "display": "Skogens Hemmeligheter",
@@ -73,7 +136,84 @@
       "src": "Skogens_Hemmeligheter",
       "category": "music",
       "gain": 0,
-      "etag": "SkogensHemmeligheter-v1"
+      "etag": "SkogensHemmeligheter-v1",
+      "color": {
+        "hue": 140.55600000000004,
+        "saturation": 84,
+        "lightness": 47,
+        "bgAngle": 102,
+        "radial1Pos": "24% 21%",
+        "radial2Pos": "11% 59%"
+      },
+      "emoji": "🔮"
+    },
+    {
+      "display": "En fjert",
+      "id": "En_fjert",
+      "src": "En_fjert",
+      "category": "voice",
+      "gain": 0,
+      "etag": "EnFjert-v1",
+      "color": {
+        "hue": 350.0640000000001,
+        "saturation": 88,
+        "lightness": 48,
+        "bgAngle": 53,
+        "radial1Pos": "53% 11%",
+        "radial2Pos": "22% 65%"
+      },
+      "emoji": "💨"
+    },
+    {
+      "display": "En fjert 2",
+      "id": "En_fjert_2",
+      "src": "En_fjert_2",
+      "category": "voice",
+      "gain": 0,
+      "etag": "EnFjert2-v1",
+      "color": {
+        "hue": 127.57200000000012,
+        "saturation": 85,
+        "lightness": 51,
+        "bgAngle": 35,
+        "radial1Pos": "27% 77%",
+        "radial2Pos": "71% 64%"
+      },
+      "emoji": "🎈"
+    },
+    {
+      "display": "Someone laughing hysterically",
+      "id": "Someone_laughing_hystericly",
+      "src": "Someone_laughing_hystericly",
+      "category": "voice",
+      "gain": 0,
+      "etag": "SomeoneLaughingHystericly-v1",
+      "color": {
+        "hue": 265.08000000000015,
+        "saturation": 87,
+        "lightness": 45,
+        "bgAngle": 92,
+        "radial1Pos": "67% 55%",
+        "radial2Pos": "87% 43%"
+      },
+      "emoji": "😂"
+    },
+    {
+      "display": "A collection of very funny sounds",
+      "id": "A_collection_off_very_funny_sounds",
+      "src": "A_collection_off_very_funny_sounds",
+      "category": "voice",
+      "gain": 0,
+      "etag": "ACollectionOfVeryFunnySounds-v1",
+      "color": {
+        "hue": 121.58800000000019,
+        "saturation": 81,
+        "lightness": 51,
+        "bgAngle": 351,
+        "radial1Pos": "24% 71%",
+        "radial2Pos": "77% 78%"
+      },
+      "emoji": "🎭"
     }
   ]
 }

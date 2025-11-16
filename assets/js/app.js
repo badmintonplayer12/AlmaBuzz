@@ -178,6 +178,8 @@ function handlePlaybackEnded({ reason } = {}) {
     return;
   }
   elements.actionButton?.classList.remove("is-playing");
+  // Clear emoji from button when playback ends
+  updateButtonEmoji(null);
   if (playlist.isComplete()) {
     updateUi({
       statusText: "Alt spilt i denne økta · Start på nytt",
@@ -364,24 +366,52 @@ async function handlePreviewClick(fileId) {
   if (!target) {
     return;
   }
-  const src = buildPreviewSrc(target);
-  if (!src) {
-    return;
-  }
-  if (libraryState.previewId === fileId && previewAudio) {
-    stopPreviewPlayback();
-    return;
-  }
+  
+  // Stop any preview playback
   stopPreviewPlayback();
-  ensureMainPlaybackIdle();
-  previewAudio = new Audio(src);
+  
+  // Stop main playback if playing
+  if (audioEngine.state === "playing") {
+    try {
+      await audioEngine.fadeOut(STOP_FADE_MS);
+      // Clear emoji from button after fade out
+      updateButtonEmoji(null);
+    } catch (error) {
+      console.error("Fade out failed", error);
+      // Clear emoji even if fade out fails
+      updateButtonEmoji(null);
+    }
+  }
+  
+  // Update playlist to start from this song
+  const currentOrder = playlist.snapshot().order;
+  const targetIndex = currentOrder.indexOf(fileId);
+  
+  if (targetIndex !== -1) {
+    // Song is in playlist, jump to it
+    playlist.init(manifestRef.files, {
+      order: currentOrder,
+      index: targetIndex,
+    });
+  } else {
+    // Song not in playlist, rebuild starting from this song
+    const newOrder = [fileId, ...currentOrder.filter(id => id !== fileId)];
+    playlist.init(manifestRef.files, {
+      order: newOrder,
+      index: 0,
+    });
+  }
+  
+  // Update button color to match the song
+  updateButtonColor(target);
+  document.body.classList.add("-ambient");
+  
+  // Play the song
+  const nextResult = playlist.next();
+  await playClipResult(nextResult);
+  
+  // Update preview button state (keep it pressed to show it's playing)
   libraryState.previewId = fileId;
-  previewAudio.volume = 1;
-  previewAudio.addEventListener("ended", () => stopPreviewPlayback());
-  previewAudio.play().catch((error) => {
-    console.warn("preview failed", error);
-    stopPreviewPlayback();
-  });
   if (elements.libraryList) {
     elements.libraryList
       .querySelectorAll(".preview-button")
@@ -430,7 +460,30 @@ function renderLibraryList() {
   filteredRows.forEach((file) => {
     const item = document.createElement("div");
     item.className = "library-item";
+    
+    // Add color styling if available
+    if (file.color) {
+      const hue = file.color.hue;
+      const sat = file.color.saturation ?? 85;
+      const light = file.color.lightness ?? 50;
+      item.style.setProperty("--item-hue", String(hue));
+      item.style.setProperty("--item-sat", `${sat}%`);
+      item.style.setProperty("--item-light", `${light}%`);
+      item.style.borderLeftColor = `hsl(${hue}, ${sat}%, ${light}%)`;
+      // Set background color with higher opacity for visible effect
+      item.style.backgroundColor = `hsla(${hue}, ${sat}%, ${light}%, 0.35)`;
+    }
+    
     const displayName = getDisplayName(file);
+
+    // Add emoji element if available
+    let emojiElement = null;
+    if (file.emoji) {
+      emojiElement = document.createElement("span");
+      emojiElement.className = "library-item__emoji";
+      emojiElement.textContent = file.emoji;
+      emojiElement.setAttribute("aria-hidden", "true");
+    }
 
     const meta = document.createElement("div");
     meta.className = "library-item__meta";
@@ -456,7 +509,12 @@ function renderLibraryList() {
     favBtn.setAttribute("aria-pressed", favoritesSet.has(file.id) ? "true" : "false");
     favBtn.setAttribute("aria-label", `Merk ${displayName || file.id} som favoritt`);
 
-    item.append(meta, previewBtn, favBtn);
+    // Append elements: emoji (if exists), meta, previewBtn, favBtn
+    const elementsToAppend = [meta, previewBtn, favBtn];
+    if (emojiElement) {
+      elementsToAppend.unshift(emojiElement);
+    }
+    item.append(...elementsToAppend);
     fragment.append(item);
   });
 
@@ -650,18 +708,26 @@ async function regeneratePlaylistFromFavorites({ source = "manual" } = {}) {
       elements.actionButton?.style.setProperty("--fade-ms", `${STOP_FADE_MS}ms`);
       try {
         await audioEngine.fadeOut(STOP_FADE_MS);
+        // Clear emoji from button after fade out
+        updateButtonEmoji(null);
       } catch (error) {
         console.warn("regen: fadeOut failed", error);
         audioEngine.stopImmediate();
+        // Clear emoji even if fade out fails
+        updateButtonEmoji(null);
       } finally {
         elements.actionButton?.style.removeProperty("--fade-ms");
       }
     } else if (audioEngine.state === "fading") {
       try {
         await audioEngine.fadeOut(STOP_FADE_MS);
+        // Clear emoji from button after fade out
+        updateButtonEmoji(null);
       } catch (error) {
         console.warn("regen: concurrent fading failed", error);
         audioEngine.stopImmediate();
+        // Clear emoji even if fade out fails
+        updateButtonEmoji(null);
       }
     } else {
       audioEngine.stopImmediate();
@@ -775,10 +841,47 @@ function nextHue() {
   return hueOffset;
 }
 
-function updateButtonColor() {
-  const hue = nextHue();
-  const sat = 80 + Math.random() * 10;
-  const light = 45 + Math.random() * 10;
+function updateButtonEmoji(clip) {
+  if (!elements.actionButton) {
+    return;
+  }
+  
+  // Remove existing emoji element if any
+  const existingEmoji = elements.actionButton.querySelector(".big-btn__emoji");
+  if (existingEmoji) {
+    existingEmoji.remove();
+  }
+  
+  // Add emoji if clip has one
+  if (clip?.emoji) {
+    const emojiElement = document.createElement("span");
+    emojiElement.className = "big-btn__emoji";
+    emojiElement.textContent = clip.emoji;
+    emojiElement.setAttribute("aria-hidden", "true");
+    elements.actionButton.appendChild(emojiElement);
+  }
+}
+
+function updateButtonColor(clip) {
+  // Use color from clip if available, otherwise fallback to random generation
+  let hue, sat, light, bgAngle, radial1Pos, radial2Pos;
+  
+  if (clip?.color) {
+    hue = clip.color.hue;
+    sat = clip.color.saturation ?? 85;
+    light = clip.color.lightness ?? 50;
+    bgAngle = `${clip.color.bgAngle}deg`;
+    radial1Pos = clip.color.radial1Pos;
+    radial2Pos = clip.color.radial2Pos;
+  } else {
+    // Fallback to existing random generation
+    hue = nextHue();
+    sat = 80 + Math.random() * 10;
+    light = 45 + Math.random() * 10;
+    bgAngle = `${Math.floor(Math.random() * 360)}deg`;
+    radial1Pos = `${10 + Math.random() * 80}% ${10 + Math.random() * 80}%`;
+    radial2Pos = `${10 + Math.random() * 80}% ${10 + Math.random() * 80}%`;
+  }
 
   document.documentElement.style.setProperty("--theme-hue", String(hue));
   document.documentElement.style.setProperty("--bg-tint-hue", String((hue + 200) % 360));
@@ -790,7 +893,6 @@ function updateButtonColor() {
   document.documentElement.style.setProperty("--btn-idle-glow", `hsla(${hue}, 85%, 65%, 0.55)`);
   document.documentElement.style.setProperty("--btn-fade-glow", `hsla(${(hue + 30) % 360}, 85%, 75%, 0.75)`);
 
-  const bgAngle = `${Math.floor(Math.random() * 360)}deg`;
   const analogA = (hue + 30) % 360;
   const analogB = (hue + 330) % 360; // hue - 30
   const bgStart = `hsl(${analogA}, 45%, 24%)`;
@@ -798,8 +900,6 @@ function updateButtonColor() {
   const bgEnd = `hsl(${analogB}, 35%, 8%)`;
   const radial1Color = `hsla(${analogA}, 70%, 58%, 0.3)`;
   const radial2Color = `hsla(${analogB}, 70%, 52%, 0.26)`;
-  const radial1Pos = `${10 + Math.random() * 80}% ${10 + Math.random() * 80}%`;
-  const radial2Pos = `${10 + Math.random() * 80}% ${10 + Math.random() * 80}%`;
 
   document.documentElement.style.setProperty("--bg-grad-angle", bgAngle);
   document.documentElement.style.setProperty("--bg-start", bgStart);
@@ -809,11 +909,23 @@ function updateButtonColor() {
   document.documentElement.style.setProperty("--bg-radial-2", radial2Color);
   document.documentElement.style.setProperty("--bg-radial-1-pos", radial1Pos);
   document.documentElement.style.setProperty("--bg-radial-2-pos", radial2Pos);
+  
+  // Update emoji when color is updated
+  updateButtonEmoji(clip);
 }
 
 async function playClipResult(result) {
   if (!result || !result.clip) {
     elements.actionButton?.classList.remove("is-playing");
+    // Clear emoji from button
+    updateButtonEmoji(null);
+    // Clear preview button state when playback ends
+    libraryState.previewId = null;
+    if (elements.libraryList) {
+      elements.libraryList
+        .querySelectorAll(".preview-button[aria-pressed='true']")
+        .forEach((btn) => btn.setAttribute("aria-pressed", "false"));
+    }
     updateUi({
       statusText: "Alt spilt i denne økta · Start på nytt",
       actionLabel: "Alt spilt",
@@ -825,6 +937,22 @@ async function playClipResult(result) {
     return;
   }
   try {
+    // Update preview button state to show which song is playing
+    libraryState.previewId = result.clip.id;
+    if (elements.libraryList) {
+      elements.libraryList
+        .querySelectorAll(".preview-button")
+        .forEach((btn) => {
+          btn.setAttribute(
+            "aria-pressed",
+            btn.dataset.fileId === result.clip.id ? "true" : "false",
+          );
+        });
+    }
+    
+    // Update button emoji
+    updateButtonEmoji(result.clip);
+    
     updateUi({
       statusText: `Spiller #${result.index + 1} av ${result.total} …`,
       actionLabel: "Fade ut",
@@ -894,7 +1022,7 @@ async function playClipResult(result) {
 async function playNext() {
   const nextResult = playlist.next();
   if (nextResult?.clip) {
-    updateButtonColor();
+    updateButtonColor(nextResult.clip);
     document.body.classList.add("-ambient");
   }
   await playClipResult(nextResult);
@@ -915,11 +1043,15 @@ async function handleActionClick() {
     elements.actionButton?.style.setProperty("--fade-ms", `${STOP_FADE_MS}ms`);
     try {
       await audioEngine.fadeOut(STOP_FADE_MS);
+      // Clear emoji from button after fade out
+      updateButtonEmoji(null);
       elements.actionButton?.classList.add("post-bounce");
       setTimeout(() => elements.actionButton?.classList.remove("post-bounce"), 420);
       elements.actionButton?.style.removeProperty("--fade-ms");
     } catch (error) {
       console.error("Fade out failed", error);
+      // Clear emoji even if fade out fails
+      updateButtonEmoji(null);
       updateUi({
         statusText: "Fade feilet · prøv igjen",
         actionLabel: "Start neste",
